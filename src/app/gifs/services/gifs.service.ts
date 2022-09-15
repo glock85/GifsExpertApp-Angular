@@ -22,16 +22,22 @@ export class GifsService {
     if (!this._historial.includes(query)) {
       this._historial.unshift(query);
       this._historial = this._historial.splice(0, 10);
+
+      localStorage.setItem('historial', JSON.stringify(this._historial));
     }
 
     this.http.get<SearchGifsResponse>(`https://api.giphy.com/v1/gifs/search?api_key=c7uen6ccxk2BGn0aX0MQp6UUP6APbp74&q=${query}&limit=10`)
       .subscribe((resp) => {
         console.log(resp);
         this.resultados = resp.data;
+        localStorage.setItem('resultados', JSON.stringify(this.resultados));
       });
 
     console.log(this._historial);
   }
 
-  constructor( private http: HttpClient) {}
+  constructor( private http: HttpClient) {
+    this._historial = JSON.parse(localStorage.getItem('historial')!) || [];
+    this.resultados = JSON.parse(localStorage.getItem('resultados')!) || [];
+  }
 }
